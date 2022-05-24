@@ -38,7 +38,7 @@ public class EmployeeRepositoryTests {
     //JUnit test for get all employees operation
     @DisplayName("JUnit test for get all employees operation")
     @Test
-    public void givenEmployeesList_whenFindAll_thenEmployeesList() {
+    public void givenEmployeesList_whenFindAll_thenReturnEmployeesList() {
         //given - precondition or setup
         Employee employee1 = Employee.builder()
                 .firstName("John")
@@ -66,7 +66,7 @@ public class EmployeeRepositoryTests {
     //JUnit test for get employee by id operation
     @DisplayName("JUnit test for get employee by id operation")
     @Test
-    public void givenEmployeeObject_whenFindById_thenReturnEmployeeObject() {
+    public void givenEmployeeId_whenFindById_thenReturnEmployeeObject() {
         //given - precondition or setup
         Employee employee = Employee.builder()
                 .firstName("John")
@@ -77,6 +77,25 @@ public class EmployeeRepositoryTests {
 
         //when - action or the behavior we are testing
         Employee employeeDB = employeeRepository.findById(employee.getId()).get(); //since findById return Optional we need to use .get() method
+
+        //then - verify the output
+        assertThat(employeeDB).isNotNull();
+    }
+
+    //JUnit test for get employee by email operation
+    @DisplayName("JUnit test for get employee by email operation")
+    @Test
+    public void givenEmployeeEmail_whenFindByEmail_thenReturnEmployeeObject() {
+        //given - precondition or setup
+        Employee employee = Employee.builder()
+                .firstName("John")
+                .lastName("Cena")
+                .email("john@gmail.com")
+                .build();
+        employeeRepository.save(employee);
+
+        //when - action or the behavior we are testing
+        Employee employeeDB = employeeRepository.findByEmail("john@gmail.com").get();
 
         //then - verify the output
         assertThat(employeeDB).isNotNull();
