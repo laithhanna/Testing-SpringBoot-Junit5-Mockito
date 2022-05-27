@@ -4,7 +4,7 @@ import com.practice.springboot.exception.ResourceNotFoundException;
 import com.practice.springboot.model.Employee;
 import com.practice.springboot.repository.EmployeeRepository;
 import com.practice.springboot.service.impl.EmployeeServiceImpl;
-import org.assertj.core.api.Assertions;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,7 +75,7 @@ public class EmployeeServiceTests { //basically we want to extend our class beha
         Employee savedEmployee = employeeService.saveEmployee(employee);
 
         //then - verify the output
-        Assertions.assertThat(savedEmployee).isNotNull();
+        assertThat(savedEmployee).isNotNull();
     }
 
     //JUnit test for saveEmployee method which throws exception
@@ -113,7 +114,22 @@ public class EmployeeServiceTests { //basically we want to extend our class beha
         List<Employee> employeeList = employeeService.getAllEmployees();
 
         //then - verify the output
-        Assertions.assertThat(employeeList).isNotNull();
-        Assertions.assertThat(employeeList.size()).isEqualTo(2);
+        assertThat(employeeList).isNotNull();
+        assertThat(employeeList.size()).isEqualTo(2);
+    }
+
+    //JUnit test for getAllEmployees method - negative scenario
+    @DisplayName("JUnit test for getAllEmployees method - negative scenario")
+    @Test
+    public void givenEmptyEmployeesList_whenGetAllEmployees_thenReturnEmptyEmployeesList() {
+        //given - precondition or setup
+        given(employeeRepository.findAll()).willReturn(Collections.emptyList());
+
+        //when - action or the behavior we are testing
+        List<Employee> employeeList = employeeService.getAllEmployees();
+
+        //then - verify the output
+        assertThat(employeeList).isEmpty();
+        assertThat(employeeList.size()).isEqualTo(0);
     }
 }
