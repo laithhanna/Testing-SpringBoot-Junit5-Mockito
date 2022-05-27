@@ -7,30 +7,35 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+@ExtendWith(MockitoExtension.class) //this is used to tell Mockito that we are using Mockito annotations to mock the dependencies
+public class EmployeeServiceTests { //basically we want to extend our class behavior from MockitoExtension class
 
-public class EmployeeServiceTests {
-
+    @Mock
     private EmployeeRepository employeeRepository;
-    private EmployeeService employeeService;
+
+    @InjectMocks //@InjectMocks creates the mock object of the class and inject the mocks that are marked with @Mock into it
+    private EmployeeServiceImpl employeeService;
 
     /*
     Note for me:
-
-    Since EmployeeService depends on EmployeeRepository, when testing the EmployeeService we need to mock the employeeRepository inside the EmployeeService.
-    So, in the setup method below, we will mock an EmployeeRepository object. Also, since we are testing EmployeeService, we need
-    to create an EmployeeService object and inject the employeeRepository mocking object in it.
-    Now, we are ready to test the EmployeeService methods.
-    - Note that I used constructor based dependency injection approach to inject the EmployeeRepository object in the EmployeeService object
+    Since EmployeeService depends on EmployeeRepository, when testing the EmployeeService we need to mock the employeeRepository
+    inside the EmployeeService. Now, instead of using the Mockito.mock() method to mock the EmployeeRepository, we can use the
+    @Mock annotation. and instead of using constructor based dependency injection to inject the mocked EmployeeRepository object
+    into the EmployeeService object as shown in the commented section of the setup method, we can use @InjectMocks annotation.
     */
     @BeforeEach
     public void setup() {
-        employeeRepository = Mockito.mock(EmployeeRepository.class);
-        employeeService = new EmployeeServiceImpl(employeeRepository);
+        //employeeRepository = Mockito.mock(EmployeeRepository.class);
+        //employeeService = new EmployeeServiceImpl(employeeRepository);
     }
 
     //JUnit test for saveEmployee method
