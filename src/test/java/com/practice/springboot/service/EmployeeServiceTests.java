@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class) //this is used to tell Mockito that we are using Mockito annotations to mock the dependencies
@@ -93,5 +94,26 @@ public class EmployeeServiceTests { //basically we want to extend our class beha
         //then - verify that we will never reach the save() method because we have thrown the exception
         //verify(mocked object, #of invocations of the mocked object's method).method()
         verify(employeeRepository, never()).save(any(Employee.class));
+    }
+
+    //JUnit test for getAllEmployees method
+    @DisplayName("JUnit test for getAllEmployees method")
+    @Test
+    public void givenEmployeesList_whenGetAllEmployees_thenReturnEmployeesList() {
+        //given - precondition or setup
+        Employee employee2 = Employee.builder()
+                .id(2L)
+                .firstName("Will")
+                .lastName("Smith")
+                .email("will@gmail.com")
+                .build();
+        given(employeeRepository.findAll()).willReturn(List.of(employee, employee2));
+
+        //when - action or the behavior we are testing
+        List<Employee> employeeList = employeeService.getAllEmployees();
+
+        //then - verify the output
+        Assertions.assertThat(employeeList).isNotNull();
+        Assertions.assertThat(employeeList.size()).isEqualTo(2);
     }
 }
