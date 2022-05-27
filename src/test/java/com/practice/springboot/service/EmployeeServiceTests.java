@@ -1,5 +1,6 @@
 package com.practice.springboot.service;
 
+import com.practice.springboot.exception.ResourceNotFoundException;
 import com.practice.springboot.model.Employee;
 import com.practice.springboot.repository.EmployeeRepository;
 import com.practice.springboot.service.impl.EmployeeServiceImpl;
@@ -8,7 +9,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -68,5 +74,24 @@ public class EmployeeServiceTests { //basically we want to extend our class beha
 
         //then - verify the output
         Assertions.assertThat(savedEmployee).isNotNull();
+    }
+
+    //JUnit test for saveEmployee method which throws exception
+    @DisplayName("JUnit test for saveEmployee method which throws exception")
+    @Test
+    public void givenExistingEmail_whenSaveEmployee_thenThrowsException() {
+
+        //given - precondition or setup
+        given(employeeRepository.findByEmail(employee.getEmail())).willReturn(Optional.of(employee));
+
+        //when - action or the behavior we are testing
+        //assertThrows(expected type, Executable executable "aka lambda expression")
+        org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            employeeService.saveEmployee(employee);
+        });
+
+        //then - verify that we will never reach the save() method because we have thrown the exception
+        //verify(mocked object, #of invocations of the mocked object's method).method()
+        verify(employeeRepository, never()).save(any(Employee.class));
     }
 }
