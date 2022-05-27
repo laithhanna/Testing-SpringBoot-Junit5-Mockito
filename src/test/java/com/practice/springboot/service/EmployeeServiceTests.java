@@ -15,8 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.*;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -178,5 +178,27 @@ public class EmployeeServiceTests { //basically we want to extend our class beha
         //then - verify the output
         assertThat(updatedEmployee).isNotNull();
         assertThat(updatedEmployee.getEmail()).isEqualTo("cena@gmail.com");
+    }
+
+    //JUnit test for deleteEmployee - no exception thrown
+    @DisplayName("JUnit test for deleteEmployee - no exception thrown")
+    @Test
+    public void givenEmployeeId_whenDeleteEmployee_thenNothing() {
+
+        /*
+        Note to me:
+        When testing any method that return void (deleteEmployee() returns void). We have to use BDDMockito.willDoNothing() method
+        because if we use given-willReturn pattern. The method will not return anything so the "WillReturn" section cannot happen
+        */
+        //given - precondition or setup
+        long employeeId = 1L;
+        given(employeeRepository.findById(employeeId)).willReturn(Optional.of(employee));
+        willDoNothing().given(employeeRepository).deleteById(employeeId);
+
+        //when - action or the behavior we are testing
+        employeeService.deleteEmployee(employeeId);
+
+        //then - verify the output
+        verify(employeeRepository, times(1)).deleteById(employeeId);
     }
 }

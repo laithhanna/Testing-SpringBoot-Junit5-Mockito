@@ -50,4 +50,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee updateEmployee(Employee updatedEmployee) {
         return employeeRepository.save(updatedEmployee);
     }
+
+    @Override
+    public void deleteEmployee(long id) {
+        Optional<Employee> employeeToDelete = employeeRepository.findById(id);
+        if (employeeToDelete.isEmpty()) {
+            throw new EmployeeIdNotFoundException("Provided employee id is not found: " + id);
+        }
+        employeeRepository.deleteById(id);
+    }
 }
