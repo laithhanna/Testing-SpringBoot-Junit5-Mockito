@@ -8,10 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
+import static org.mockito.BDDMockito.given;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -32,38 +31,37 @@ public class EmployeeServiceTests { //basically we want to extend our class beha
     @Mock annotation. and instead of using constructor based dependency injection to inject the mocked EmployeeRepository object
     into the EmployeeService object as shown in the commented section of the setup method, we can use @InjectMocks annotation.
     */
+    private  Employee employee;
+
     @BeforeEach
     public void setup() {
         //employeeRepository = Mockito.mock(EmployeeRepository.class);
         //employeeService = new EmployeeServiceImpl(employeeRepository);
+        employee = Employee.builder()
+                .id(1L)
+                .firstName("John")
+                .lastName("Cena")
+                .email("john@gmail.com")
+                .build();
     }
 
     //JUnit test for saveEmployee method
     @DisplayName("JUnit test for saveEmployee method")
     @Test
     public void givenEmployeeObject_whenSaveEmployee_thenReturnEmployeeObject() {
-        /*
-        Stubbing go in the given section.
+        /* We need to use stubbing:
         Using stubbing we train the mock objects about what values to return when its methods are invoked.
         Mockito provides when–then (or in BDD style given-will) stubbing pattern to stub a mock object’s method invocation.
         */
-
         //given - precondition or setup
-        Employee employee = Employee.builder()
-                .id(1L)
-                .firstName("John")
-                .lastName("Cena")
-                .email("john@gmail.com")
-                .build();
-
-        //we need to stub 2 method calls.
-        //The saveEmployee method uses 2 employeeRepository methods, "findByEmail" and "save"
+            //we need to stub 2 method calls.
+            //The saveEmployee method internally uses 2 employeeRepository methods, "findByEmail" and "save"
 
         //when invoking findByEmail method, it should return empty Optional
-        BDDMockito.given(employeeRepository.findByEmail(employee.getEmail())).willReturn(Optional.empty());
+        given(employeeRepository.findByEmail(employee.getEmail())).willReturn(Optional.empty());
 
         //when invoking save method, it should return the saved employee object
-        BDDMockito.given(employeeRepository.save(employee)).willReturn(employee);
+        given(employeeRepository.save(employee)).willReturn(employee);
 
         //when - action or the behavior we are testing
         Employee savedEmployee = employeeService.saveEmployee(employee);
