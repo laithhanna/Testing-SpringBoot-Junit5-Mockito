@@ -132,4 +132,18 @@ public class EmployeeServiceTests { //basically we want to extend our class beha
         assertThat(employeeList).isEmpty();
         assertThat(employeeList.size()).isEqualTo(0);
     }
+
+    //JUnit test for getEmployeeById method - no exception
+    @DisplayName("JUnit test for getEmployeeById method - no exception")
+    @Test
+    public void givenEmployeeId_whenGetEmployeeById_thenReturnEmployeeObject() {
+        //given
+        given(employeeRepository.findById(1L)).willReturn(Optional.of(employee));
+
+        //when
+        Employee savedEmployee = employeeService.getEmployeeById(employee.getId()).get();
+
+        //then
+        assertThat(savedEmployee).isNotNull();
+    }
 }

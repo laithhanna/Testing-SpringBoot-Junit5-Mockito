@@ -1,5 +1,6 @@
 package com.practice.springboot.service.impl;
 
+import com.practice.springboot.exception.EmployeeIdNotFoundException;
 import com.practice.springboot.exception.ResourceNotFoundException;
 import com.practice.springboot.model.Employee;
 import com.practice.springboot.repository.EmployeeRepository;
@@ -34,5 +35,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
+    }
+
+    @Override
+    public Optional<Employee> getEmployeeById(long id) {
+        Optional<Employee> employee = employeeRepository.findById(id);
+        if (employee.isEmpty()) {
+            throw new EmployeeIdNotFoundException("Provided employee id is not found: " + id);
+        }
+        return employee;
     }
 }
