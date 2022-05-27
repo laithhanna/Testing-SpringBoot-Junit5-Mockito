@@ -1,10 +1,13 @@
 package com.practice.springboot.service;
 
+import com.practice.springboot.exception.EmployeeIdNotFoundException;
 import com.practice.springboot.exception.ResourceNotFoundException;
 import com.practice.springboot.model.Employee;
 import com.practice.springboot.repository.EmployeeRepository;
 import com.practice.springboot.service.impl.EmployeeServiceImpl;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -88,7 +91,7 @@ public class EmployeeServiceTests { //basically we want to extend our class beha
 
         //when - action or the behavior we are testing
         //assertThrows(expected type, Executable executable "aka lambda expression")
-        org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
             employeeService.saveEmployee(employee);
         });
 
@@ -145,5 +148,19 @@ public class EmployeeServiceTests { //basically we want to extend our class beha
 
         //then
         assertThat(savedEmployee).isNotNull();
+    }
+
+    //JUnit test for getEmployeeById method - exception thrown case
+    @DisplayName("JUnit test for getEmployeeById method - exception thrown case")
+    @Test
+    public void givenInvalidEmployeeId_whenGetEmployeeById_thenThrowException() {
+        //given
+        given(employeeRepository.findById(2L)).willReturn(Optional.empty());
+
+        //when
+        Assertions.assertThrows(EmployeeIdNotFoundException.class, () -> employeeService.getEmployeeById(2L));
+
+        //then getEmployeeById will never return an employeeObject
+
     }
 }
