@@ -163,4 +163,20 @@ public class EmployeeServiceTests { //basically we want to extend our class beha
         //then getEmployeeById will never return an employeeObject
 
     }
+
+    //JUnit test for updateEmployee method
+    @DisplayName("JUnit test for updateEmployee method")
+    @Test
+    public void givenEmployeeObject_whenUpdateEmployee_thenReturnUpdatedEmployee() {
+        //given - precondition or setup
+        given(employeeRepository.save(employee)).willReturn(employee);
+        employee.setEmail("cena@gmail.com");
+
+        //when - action or the behavior we are testing
+        Employee updatedEmployee = employeeService.updateEmployee(employee);
+
+        //then - verify the output
+        assertThat(updatedEmployee).isNotNull();
+        assertThat(updatedEmployee.getEmail()).isEqualTo("cena@gmail.com");
+    }
 }
