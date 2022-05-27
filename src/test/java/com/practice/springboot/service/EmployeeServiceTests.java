@@ -201,4 +201,20 @@ public class EmployeeServiceTests { //basically we want to extend our class beha
         //then - verify the output
         verify(employeeRepository, times(1)).deleteById(employeeId);
     }
+
+    //JUnit test for deleteEmployee - no exception thrown
+    @DisplayName("JUnit test for deleteEmployee - exception thrown")
+    @Test
+    public void givenInvalidEmployeeId_whenDeleteEmployee_thenThrowException() {
+
+        //given - precondition or setup
+        long employeeId = 2L;
+        given(employeeRepository.findById(employeeId)).willReturn(Optional.empty());
+
+        //when - action or the behavior we are testing
+        Assertions.assertThrows(EmployeeIdNotFoundException.class, () -> employeeService.deleteEmployee(employeeId));
+
+        //then - verify the output
+        verify(employeeRepository, never()).deleteById(employeeId);
+    }
 }
