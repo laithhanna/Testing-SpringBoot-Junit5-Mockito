@@ -36,7 +36,7 @@ public class EmployeeController {
         //ResponseEntity represents the whole HTTP response: status code, headers, and body.
         // As a result, we can use it to fully configure the HTTP response.
         return employeeService.getEmployeeById(employeeId)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok) //if id is valid return Ok status code
+                .orElseGet(() -> ResponseEntity.notFound().build()); //if id is not valid return 404 notFound status
     }
 }

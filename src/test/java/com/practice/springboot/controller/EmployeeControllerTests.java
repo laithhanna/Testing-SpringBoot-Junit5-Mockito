@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -104,6 +105,26 @@ public class EmployeeControllerTests {
                 .andExpect(jsonPath("$.size()", is(2)));
                 //since the return is an array of JSON. $ represent an array of JSON so $.size give you size of that array
 
+    }
+
+    //JUnit test for getEmployeeById REST api - positive scenario
+    @DisplayName("JUnit test for getEmployeeById REST api - positive scenario")
+    @Test
+    public void givenEmployeeId_whenGetEmployeeById_thenReturnsEmployeeObject() throws Exception{
+        //given - precondition or setup
+        long employeeId = 1;
+        //employee object will be created in the setup method
+        given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.of(employee));
+
+        //when - action or the behavior we are testing
+        ResultActions response = mockMvc.perform(get("/api/employees/{id}", employeeId));
+
+        //then - verify the output
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName", is(employee.getFirstName())))
+                .andExpect(jsonPath("$.lastName", is(employee.getLastName())))
+                .andExpect(jsonPath("$.email", is(employee.getEmail())));
     }
 
 }
