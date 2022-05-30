@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.springboot.model.Employee;
 import com.practice.springboot.service.EmployeeService;
 import org.hamcrest.CoreMatchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -18,6 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -40,20 +43,28 @@ public class EmployeeControllerTests {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private Employee employee;
+
+    @BeforeEach
+    public void setup() {
+        employee = Employee.builder()
+                .firstName("John")
+                .lastName("Cena")
+                .email("john@gmail.com")
+                .build();
+    }
+
     //JUnit test for createEmployee method
     @DisplayName("JUnit test for createEmployee method")
     @Test
     public void givenEmployeeObject_whenCreateEmployee_thenReturnSavedEmployee() throws Exception{
         //given - precondition or setup
-        Employee employee = Employee.builder()
-                .firstName("John")
-                .lastName("Cena")
-                .email("john@gmail.com")
-                .build();
+        //employee object is created in the setup method
 
         //stub the employeeService.saveEmployee() method
         BDDMockito.given(employeeService.saveEmployee(ArgumentMatchers.any(Employee.class)))
                 .willAnswer((invocation) -> invocation.getArgument(0)); //will return the same object we pass
+
 
         //when - action or the behavior we are testing
         //make a post rest api call. pass the content type as JSON. Content body is employee JSON object
@@ -70,6 +81,30 @@ public class EmployeeControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", CoreMatchers.is(employee.getLastName())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.email", CoreMatchers.is(employee.getEmail())));
         //note that the '$' symbol represent the root object aka the whole JSON object
+    }
+
+    //JUnit test for getAllEmployees REST api
+    @DisplayName("JUnit test for getAllEmployees REST api")
+    @Test
+    public void givenListOfEmployees_whenGetAllEmployees_thenReturnEmployeesList() throws Exception{
+        //given - precondition or setup
+        Employee employee2 = Employee.builder()
+                .firstName("Will")
+                .lastName("Smith")
+                .email("will@gmail.com")
+                .build();
+
+        BDDMockito.given(employeeService.getAllEmployees()).willReturn(List.of(employee, employee2));
+
+        //when - action or the behavior we are testing
+        ResultActions response = mockMvc.perform(get("/api/employees"));
+
+        //then - verify the output
+        response.andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.size()", CoreMatchers.is(2)));
+                //since the return is an array of JSON. $ represent an array of JSON so $.size give you size of that array
+
     }
 
 }
