@@ -32,7 +32,7 @@ public class EmployeeServiceTests { //basically we want to extend our class beha
     @Mock
     private EmployeeRepository employeeRepository;
 
-    @InjectMocks //@InjectMocks creates the mock object of the class and inject the mocks that are marked with @Mock into it
+    @InjectMocks //@InjectMocks creates object of the class and inject the mocks that are marked with @Mock into it
     private EmployeeServiceImpl employeeService;
 
     /*
