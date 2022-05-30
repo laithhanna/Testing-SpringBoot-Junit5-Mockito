@@ -39,4 +39,17 @@ public class EmployeeController {
                 .map(ResponseEntity::ok) //if id is valid return Ok status code
                 .orElseGet(() -> ResponseEntity.notFound().build()); //if id is not valid return 404 notFound status
     }
+
+    @PutMapping("{id}")
+    public ResponseEntity<Employee> updateEmployee(@PathVariable long employeeId, @RequestBody Employee employee) {
+        return employeeService.getEmployeeById(employeeId).map(savedEmployee -> {
+            savedEmployee.setFirstName(employee.getFirstName());
+            savedEmployee.setLastName(employee.getLastName());
+            savedEmployee.setEmail(employee.getEmail());
+
+            Employee updatedEmployee = employeeService.updateEmployee(savedEmployee);
+            return new ResponseEntity<>(updatedEmployee, HttpStatus.OK);
+        })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
